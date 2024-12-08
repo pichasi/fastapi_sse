@@ -2,15 +2,21 @@
     """
 
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sse_starlette.sse import EventSourceResponse
 
 from custom_types import Order
 from dependencies import RedisProvider, get_cache
-from stream import EventStream
 from lifespan_functions import lifespan
+from stream import EventStream
+
+origins = [
+    "*",
+]
 
 
 app = FastAPI(lifespan=lifespan)
+app.add_middleware(CORSMiddleware, allow_origins=origins)
 
 
 # 1. Basic Setup
