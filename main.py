@@ -3,12 +3,10 @@
 
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sse_starlette.sse import EventSourceResponse
 
 from custom_types import Order
 from dependencies import RedisProvider, get_cache
 from lifespan_functions import lifespan
-from stream import EventStream
 
 origins = [
     "*",
@@ -38,16 +36,3 @@ async def order_update(order: Order, cache: RedisProvider = Depends(get_cache)):
     return {"order": order.order_id, "status": order.status}
 
 
-@app.get("/subscribe/{channel}")
-async def stream_events(channel: str, stream: EventStream = Depends()):
-    """_summary_
-
-    Args:
-        channel (str): _description_
-        stream (EventStream, optional): _description_. Defaults to Depends().
-
-    Returns:
-        _type_: _description_
-    """
-
-    return EventSourceResponse(stream.execute(channel))
